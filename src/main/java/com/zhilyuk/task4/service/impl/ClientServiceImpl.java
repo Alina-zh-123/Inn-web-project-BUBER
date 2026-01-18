@@ -1,35 +1,55 @@
 package com.zhilyuk.task4.service.impl;
 
+import com.zhilyuk.task4.dao.ClientDao;
 import com.zhilyuk.task4.dao.impl.ClientDaoImpl;
 import com.zhilyuk.task4.entity.Client;
 import com.zhilyuk.task4.entity.Driver;
 import com.zhilyuk.task4.entity.Order;
+import com.zhilyuk.task4.exception.DaoException;
 import com.zhilyuk.task4.service.ClientService;
+import com.zhilyuk.task4.util.PasswordEncoder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.Random;
 
 public class ClientServiceImpl implements ClientService {
-    private final ClientDaoImpl clientDao = new ClientDaoImpl();
+    private static final Logger logger = LogManager.getLogger();
+    private final ClientDaoImpl clientDao;
 
-    public void signIn(String nameSurname, String password) {
-
+    public ClientServiceImpl(ClientDaoImpl clientDao) {
+        this.clientDao = clientDao;
     }
 
-    public void signOut() {
+    public Client signIn(String username, String password) throws DaoException {
+        Client client = clientDao.findByUsername(username);
+        PasswordEncoder passwordEncoder = new PasswordEncoder();
 
+        if (!client.getPasswordHash().equals(passwordEncoder.hashPassword(password))) {
+            logger.warn("Wrong password for {}", username);
+            return null;
+        }
+
+        logger.info("Client {} signed in", username);
+        return client;
     }
 
-    public void signUp(String username, String email, String password) {
+    public Client signUp(String username, String email, String password) throws DaoException {
         Client existingClient = clientDao.findByEmail(email);
         if (existingClient == null) {
-            Client newClient = new Client(Client.id++, username, email, password);
+            PasswordEncoder passwordEncoder = new PasswordEncoder();
+            Client newClient = new Client(Client.id++, username, email, passwordEncoder.hashPassword(password));
             clientDao.save(newClient);
+            logger.info("Client {} added to db", username);
+            return newClient;
         } else {
-
+            logger.warn("Client with email {} already exists", username);
         }
+        return existingClient;
     }
 
+    /*
     public void makeRequestForOrder(Client client, double destinationLatitude, double destinationLongitude) {
         Random rand = new Random();
         client.setLatitude(51.3 + (56.2 - 51.3) * rand.nextDouble());
@@ -45,4 +65,5 @@ public class ClientServiceImpl implements ClientService {
     public void declineOrder() {
 
     }
+    */
 }
