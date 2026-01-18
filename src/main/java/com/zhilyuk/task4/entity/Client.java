@@ -5,17 +5,17 @@ import java.util.Random;
 public class Client extends AbstractEntity {
     static public int id = 1;
     private final String username;
-    private final String password;
+    private final String passwordHash;
     private final String email;
     private double latitude;
     private double longitude;
     boolean banned;
     int bonusCount;
 
-    public Client(int id, String username, String password, String email) {
+    public Client(int id, String username, String passwordHash, String email) {
         super(id);
         this.username = username;
-        this.password = password;
+        this.passwordHash = passwordHash;
         this.email = email;
 
         Random rand = new Random();
@@ -32,9 +32,7 @@ public class Client extends AbstractEntity {
         return username;
     }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getPasswordHash() { return passwordHash; }
 
     public String getEmail() {
         return email;
@@ -55,4 +53,6 @@ public class Client extends AbstractEntity {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
+
+
 }
