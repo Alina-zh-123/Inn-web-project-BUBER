@@ -5,7 +5,7 @@
 
 <h1>Welcome, ${sessionScope.client.username}!</h1>
 
-<form action="/your-app-name/controller" method="post">
+<form action="/BUBER/controller" method="post">
     <input type="hidden" name="command" value="sign_out">
     <button type="submit">Sign Out</button>
 </form>
