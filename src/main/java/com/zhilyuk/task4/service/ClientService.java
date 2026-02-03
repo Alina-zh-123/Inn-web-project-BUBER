@@ -8,7 +8,7 @@ import com.zhilyuk.task4.exception.DaoException;
 import java.util.List;
 
 public interface ClientService {
-    Client signIn(String username, String password) throws DaoException;
+    Client signIn(String email, String password) throws DaoException;
     Client signUp(String username, String email, String password) throws DaoException;
     //void makeRequestForOrder(Client client, double destinationLatitude, double destinationLongitude);
     //void makeOrder(Client client);

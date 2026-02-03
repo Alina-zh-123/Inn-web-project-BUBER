@@ -18,6 +18,10 @@ public class SignUpCommand implements Command {
         ClientServiceImpl service = new ClientServiceImpl(new ClientDaoImpl());
         try {
             Client client = service.signUp(username, email, password);
+            if (client == null) {
+                request.setAttribute("error", "User already exists!");
+                return ERROR_PAGE;
+            }
             request.getSession().setAttribute("client", client);
         } catch (DaoException e) {
             request.setAttribute("error", "Dao error!");

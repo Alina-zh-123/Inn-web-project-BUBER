@@ -22,16 +22,20 @@ public class ClientServiceImpl implements ClientService {
         this.clientDao = clientDao;
     }
 
-    public Client signIn(String username, String password) throws DaoException {
-        Client client = clientDao.findByUsername(username);
+    public Client signIn(String email, String password) throws DaoException {
+        Client client = clientDao.findByEmail(email);
+        if (client == null) {
+            logger.warn("Client email {} not found", email);
+            return null;
+        }
         PasswordEncoder passwordEncoder = new PasswordEncoder();
 
         if (!client.getPasswordHash().equals(passwordEncoder.hashPassword(password))) {
-            logger.warn("Wrong password for {}", username);
+            logger.warn("Wrong password for {}", client.getUsername());
             return null;
         }
 
-        logger.info("Client {} signed in", username);
+        logger.info("Client {} signed in", client.getUsername());
         return client;
     }
 
@@ -45,8 +49,8 @@ public class ClientServiceImpl implements ClientService {
             return newClient;
         } else {
             logger.warn("Client with email {} already exists", username);
+            return null;
         }
-        return existingClient;
     }
 
     /*

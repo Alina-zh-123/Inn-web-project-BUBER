@@ -13,7 +13,8 @@ import java.util.ArrayList;
 
 public class ClientDaoImpl implements ClientDao {
     private static final String FIND_BY_EMAIL = "SELECT * FROM clients WHERE email = ?";
-    private static final String INSERT = "INSERT INTO clients(name, email, passwordHash) VALUES (?, ?, ?)";
+    private static final String FIND_BY_USERNAME = "SELECT * FROM clients WHERE username = ?";
+    private static final String INSERT = "INSERT INTO clients(username, email, passwordHash) VALUES (?, ?, ?)";
     private static final String DELETE = "DELETE FROM clients WHERE id = ?";
 
     public Client findByEmail(String email) throws DaoException {
@@ -27,7 +28,7 @@ public class ClientDaoImpl implements ClientDao {
                     int rsId = rs.getInt("id");
                     String rsUsername = rs.getString("username");
                     String rsPasswordHash = rs.getString("passwordHash");
-                    Client rsClient = new Client(rsId, rsUsername, rsPasswordHash, rsEmail);
+                    Client rsClient = new Client(rsId, rsUsername, rsEmail, rsPasswordHash);
                     return rsClient;
                 }
             }
@@ -41,7 +42,7 @@ public class ClientDaoImpl implements ClientDao {
 
     public Client findByUsername(String username) throws DaoException {
         Connection conn = ConnectionPool.getInstance().getConnection();
-        try (PreparedStatement prStmt = conn.prepareStatement(FIND_BY_EMAIL);) {
+        try (PreparedStatement prStmt = conn.prepareStatement(FIND_BY_USERNAME);) {
             prStmt.setString(1, username);
             ResultSet rs = prStmt.executeQuery();
             while (rs.next()) {
@@ -49,8 +50,8 @@ public class ClientDaoImpl implements ClientDao {
                 if (rsUsername.equals(username)) {
                     int rsId = rs.getInt("id");
                     String rsEmail = rs.getString("email");
-                    String rsPasswordHash = rs.getString("passwordHash");                    Client rsClient = new Client(rsId, rsUsername, rsPasswordHash, rsEmail);
-                    return rsClient;
+                    String rsPasswordHash = rs.getString("passwordHash");
+                    return new Client(rsId, rsUsername, rsEmail, rsPasswordHash);
                 }
             }
         } catch (SQLException e) {
@@ -65,8 +66,8 @@ public class ClientDaoImpl implements ClientDao {
         Connection conn = ConnectionPool.getInstance().getConnection();
         try (PreparedStatement prStmt = conn.prepareStatement(INSERT)) {
             prStmt.setString(1, client.getUsername());
-            prStmt.setString(2, client.getPasswordHash());
-            prStmt.setString(3, client.getEmail());
+            prStmt.setString(2, client.getEmail());
+            prStmt.setString(3, client.getPasswordHash());
             prStmt.executeUpdate();
         } catch(SQLException e){
             throw new DaoException(e.getMessage());

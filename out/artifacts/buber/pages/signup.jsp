@@ -4,7 +4,7 @@
     <title>Sign up</title>
 </head>
 <body>
-<h2>Sign up</h2>
+<h1>Sign up</h1>
 
 <form action="${pageContext.request.contextPath}/controller" method="post">
     <input type="hidden" name="command" value="SIGN_UP">

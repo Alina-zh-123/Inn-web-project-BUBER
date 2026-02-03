@@ -12,7 +12,7 @@ public class Client extends AbstractEntity {
     boolean banned;
     int bonusCount;
 
-    public Client(int id, String username, String passwordHash, String email) {
+    public Client(int id, String username, String email, String passwordHash) {
         super(id);
         this.username = username;
         this.passwordHash = passwordHash;

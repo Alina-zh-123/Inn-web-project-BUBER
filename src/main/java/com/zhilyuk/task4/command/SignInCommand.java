@@ -13,19 +13,19 @@ public class SignInCommand implements Command {
     private static final String ERROR_PAGE = "/pages/error.jsp";
 
     public String execute(HttpServletRequest request) {
-        String username = request.getParameter("email");
+        String email = request.getParameter("email");
         String password = request.getParameter("password");
 
         ClientService service = new ClientServiceImpl(new ClientDaoImpl());
         try {
-            Client client = service.signIn(username, password);
+            Client client = service.signIn(email, password);
 
             if (client != null) {
                 request.getSession().setAttribute("client", client);
                 return HOME_PAGE;
             } else {
                 request.setAttribute("error", "Sign in error!");
-                return SIGN_IN_PAGE;
+                return ERROR_PAGE;
             }
 
         } catch (DaoException e) {
