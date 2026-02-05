@@ -3,33 +3,27 @@ package com.zhilyuk.task4.command;
 import com.zhilyuk.task4.dao.impl.CarDaoImpl;
 import com.zhilyuk.task4.dao.impl.ClientDaoImpl;
 import com.zhilyuk.task4.dao.impl.OrderDaoImpl;
-import com.zhilyuk.task4.entity.Client;
+import com.zhilyuk.task4.entity.Car;
 import com.zhilyuk.task4.exception.DaoException;
 import com.zhilyuk.task4.service.ClientService;
 import com.zhilyuk.task4.service.impl.ClientServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 
-public class SignUpCommand implements Command {
+public class DeclineOrderCommand implements Command {
     private static final String HOME_PAGE = "/pages/home.jsp";
     private static final String ERROR_PAGE = "/pages/error.jsp";
 
     public String execute(HttpServletRequest request) {
-        String username = request.getParameter("username");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-
         ClientService service = new ClientServiceImpl(new ClientDaoImpl(), new CarDaoImpl(), new OrderDaoImpl());
+        Car car = (Car) request.getSession().getAttribute("car");
+        int id = car.getId();
         try {
-            Client client = service.signUp(username, email, password);
-            if (client == null) {
-                request.setAttribute("error", "User already exists!");
-                return ERROR_PAGE;
-            }
-            request.getSession().setAttribute("client", client);
+            service.declineOrder(id);
         } catch (DaoException e) {
             request.setAttribute("error", "Dao error!");
             return ERROR_PAGE;
         }
+        request.getSession().setAttribute("car", null);
         return HOME_PAGE;
     }
 }

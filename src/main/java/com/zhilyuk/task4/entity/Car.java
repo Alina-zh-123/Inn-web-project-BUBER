@@ -32,4 +32,15 @@ public class Car extends AbstractEntity {
     public void setAvailable(boolean available) {
         this.available = available;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.color)
+                .append(" ")
+                .append(this.model)
+                .append(", ")
+                .append(this.carNumber);
+        return sb.toString();
+    }
 }

@@ -1,6 +1,8 @@
 package com.zhilyuk.task4.command;
 
+import com.zhilyuk.task4.dao.impl.CarDaoImpl;
 import com.zhilyuk.task4.dao.impl.ClientDaoImpl;
+import com.zhilyuk.task4.dao.impl.OrderDaoImpl;
 import com.zhilyuk.task4.entity.Client;
 import com.zhilyuk.task4.exception.DaoException;
 import com.zhilyuk.task4.service.ClientService;
@@ -16,7 +18,7 @@ public class SignInCommand implements Command {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        ClientService service = new ClientServiceImpl(new ClientDaoImpl());
+        ClientService service = new ClientServiceImpl(new ClientDaoImpl(), new CarDaoImpl(), new OrderDaoImpl());
         try {
             Client client = service.signIn(email, password);
 

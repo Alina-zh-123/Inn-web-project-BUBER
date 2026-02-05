@@ -1,25 +1,32 @@
 package com.zhilyuk.task4.service.impl;
 
+import com.zhilyuk.task4.dao.CarDao;
 import com.zhilyuk.task4.dao.ClientDao;
+import com.zhilyuk.task4.dao.OrderDao;
+import com.zhilyuk.task4.dao.impl.CarDaoImpl;
 import com.zhilyuk.task4.dao.impl.ClientDaoImpl;
-import com.zhilyuk.task4.entity.Client;
-import com.zhilyuk.task4.entity.Driver;
-import com.zhilyuk.task4.entity.Order;
+import com.zhilyuk.task4.dao.impl.OrderDaoImpl;
+import com.zhilyuk.task4.entity.*;
 import com.zhilyuk.task4.exception.DaoException;
 import com.zhilyuk.task4.service.ClientService;
 import com.zhilyuk.task4.util.PasswordEncoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class ClientServiceImpl implements ClientService {
     private static final Logger logger = LogManager.getLogger();
     private final ClientDaoImpl clientDao;
+    private final CarDaoImpl carDao;
+    private final OrderDaoImpl orderDao;
 
-    public ClientServiceImpl(ClientDaoImpl clientDao) {
+    public ClientServiceImpl(ClientDaoImpl clientDao, CarDaoImpl carDao, OrderDaoImpl orderDao) {
         this.clientDao = clientDao;
+        this.carDao = carDao;
+        this.orderDao = orderDao;
     }
 
     public Client signIn(String email, String password) throws DaoException {
@@ -53,21 +60,25 @@ public class ClientServiceImpl implements ClientService {
         }
     }
 
-    /*
-    public void makeRequestForOrder(Client client, double destinationLatitude, double destinationLongitude) {
-        Random rand = new Random();
-        client.setLatitude(51.3 + (56.2 - 51.3) * rand.nextDouble());
-        client.setLongitude(23.2 + (32.8 - 23.2) * rand.nextDouble());
-
-        Order order = new Order();
+    public ArrayList<Car> makeRequestForOrder() throws DaoException {
+        ArrayList<Car> cars = carDao.findAll();
+        ArrayList<Car> res = new ArrayList<>();
+        for (Car car : cars) {
+            if (car.isAvailable()) {
+                res.add(car);
+            }
+        }
+        return res;
     }
 
-    public void makeOrder(List<Driver> Driver) {
-
+    public Order makeOrder(Client client, Car car) throws DaoException {
+        Order order = new Order(0, client, car);
+        orderDao.save(order);
+        order.setStatus(OrderStatus.IN_PROCESS);
+        return order;
     }
 
-    public void declineOrder() {
-
+    public void declineOrder(int id) throws DaoException {
+        orderDao.deleteById(id);
     }
-    */
 }
